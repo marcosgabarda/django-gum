@@ -20,9 +20,9 @@ setup(
         'django(>=1.4)',
         'elasticsearch(>=1.0.0,<2.0.0)',
     ],
-    package_data={
-        'django-gum': []
-    },
+    # package_data={
+    #     'django-gum': []
+    # },
     test_suite='tests',
     classifiers=[
         'Environment :: Web Environment',
