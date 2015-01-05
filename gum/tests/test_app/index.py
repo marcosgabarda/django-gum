@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from gum.indexer import MappingType, indexer
+from gum.tests.test_app.models import Post
 
 
 class PostMappingType(MappingType):
@@ -25,4 +26,4 @@ class PostMappingType(MappingType):
             }
         }
 
-indexer.register()
+indexer.register(Post, PostMappingType)

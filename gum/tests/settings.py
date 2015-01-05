@@ -11,8 +11,10 @@ DATABASES = {
 INSTALLED_APPS = (
     'gum',
     'gum.tests',
+    'gum.tests.test_app',
 )
 
+GUM_DEBUG = True
 GUM_ELASTICSEARCH_URLS = ["http://127.0.0.1:9200/"]
 GUM_ELASTICSEARCH_INDEX = ".gum-tests"
 

@@ -8,7 +8,7 @@ class ElasticsearchManager(object):
     to Elasticsearch from a specific model.
     """
 
-    def __init__(self):
+    def __init__(self, model=None, mapping_type=None):
         self.model = None
         self.mapping_type = None
 

@@ -2,13 +2,19 @@
 from __future__ import unicode_literals
 
 from django.db.models.base import ModelBase
+from django.db.models.signals import pre_save, post_save, pre_delete
 from gum.managers import ElasticsearchManager
+from gum.signals import handle_save, handle_delete
 
 from gum.utils import elasticsearch_connection
 from gum.settings import ELASTICSEARCH_INDICES
 
 
 class AlreadyRegistered(Exception):
+    pass
+
+
+class NotRegistered(Exception):
     pass
 
 
@@ -61,7 +67,7 @@ class MappingType(object):
     def create_mapping_type(self):
         """Creates the Elasticsearch type."""
         es = elasticsearch_connection()
-        print es.indices.put_mapping(
+        es.indices.put_mapping(
             index=self.index,
             doc_type=self.get_type(),
             body=self.mapping(),
@@ -80,6 +86,19 @@ class MappingType(object):
             doc_type=self.get_type(),
             id=self.get_id(instance),
             body=self.document(instance)
+        )
+
+    def delete_document(self, instance):
+        """Deletes an instance of the model.
+
+        :param instance:
+        :return:
+        """
+        es = elasticsearch_connection()
+        es.delete(
+            index=self.index,
+            doc_type=self.get_type(),
+            id=self.get_id(instance),
         )
 
 
@@ -108,6 +127,8 @@ class Indexer(object):
                 model.elasticsearch = ElasticsearchManager()
                 model.elasticsearch.model = model
                 model.elasticsearch.mapping_type = mapping_type
+            post_save.connect(handle_save, sender=model)
+            pre_delete.connect(handle_delete, sender=model)
             self._registry[model] = mapping_type
 
     def get_registered_models(self):
@@ -115,6 +136,13 @@ class Indexer(object):
         registered models.
         """
         return [model for (model, mapping_type_class) in self._registry.items()]
+
+    def get_mapping_type(self, model):
+        """Gets the mapping type insance for a given `model` class."""
+        try:
+            return self._registry[model]
+        except KeyError:
+            raise NotRegistered()
 
     def initialize_index(self):
         """Creates and initialize index.
@@ -126,6 +154,17 @@ class Indexer(object):
         for _, mapping_type in self._registry.iteritems():
             if mapping_type.index != ELASTICSEARCH_INDICES:
                 es.indices.create(index=mapping_type.index, ignore=400)
+
+    def remove_index(self):
+        """Deletes used indices.
+
+        TODO: Add settings configuration of the index.
+        """
+        es = elasticsearch_connection()
+        es.indices.delete(index=ELASTICSEARCH_INDICES, ignore=400)
+        for _, mapping_type in self._registry.iteritems():
+            if mapping_type.index != ELASTICSEARCH_INDICES:
+                es.indices.delete(index=mapping_type.index, ignore=400)
 
     def update_index(self):
         """Update index for all registered models."""
