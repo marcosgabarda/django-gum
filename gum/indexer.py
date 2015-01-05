@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db.models.base import ModelBase
+from gum.managers import ElasticsearchManager
 
 from gum.utils import elasticsearch_connection
 from gum.settings import ELASTICSEARCH_INDICES
@@ -102,7 +103,12 @@ class Indexer(object):
         for model in model_or_iterable:
             if model in self._registry:
                 raise AlreadyRegistered('The model %s is already registered for indexing' % model.__name__)
-            self._registry[model] = mapping_type_class(model)
+            mapping_type = mapping_type_class(model)
+            if not hasattr(model, "elasticsearch"):
+                model.elasticsearch = ElasticsearchManager()
+                model.elasticsearch.model = model
+                model.elasticsearch.mapping_type = mapping_type
+            self._registry[model] = mapping_type
 
     def get_registered_models(self):
         """Returns a list of all registered models, or just concrete
