@@ -55,3 +55,15 @@ Quick start
 4. Update Elasticsearch index::
 
     ./manage.py update_index
+
+Searching
+---------
+
+You can perform Elasticsearch searches (accessing ``_search`` method) using ``elasticseaech`` model
+attribute::
+
+    response = Post.elasticsearch.search(body={
+        "query": {
+            "match_all": {}
+        }
+    })
