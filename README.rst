@@ -20,6 +20,8 @@ Quick start
 
 3. Create an index.py in your app, with a content like this::
 
+    from gum.indexer import MappingType, indexer
+
     class PostMappingType(MappingType):
 
         def document(self, instance):
@@ -47,6 +49,9 @@ Quick start
                     }
                 }
             }
+
+    indexer.register(Post, PostMappingType)
+
 4. Update Elasticsearch index::
 
     ./manage.py update_index
