@@ -9,7 +9,7 @@ import datetime
 import os
 import subprocess
 
-VERSION = (0, 0, 1, 'alpha', 0)
+VERSION = (0, 0, 2, 'alpha', 0)
 default_app_config = 'gum.apps.GumConfig'
 
 
