@@ -1,11 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 from setuptools import setup
+
+# Dynamically calculate the version based on modeltranslation.VERSION.
+version = __import__('gum').get_version()
 
 setup(
     name='django-gum',
-    version='0.1.0',
+    version=version,
     description='Elasticsearch client with Django support.',
     author='Marcos Gabarda',
     author_email='marcosgabarda@gmail.com',

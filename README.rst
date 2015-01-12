@@ -9,7 +9,7 @@ Quick start
 
 1. Install using pip::
 
-    pip install -e git+git@github.com:onpublico/django-gum.git#egg=django-gum
+    pip install -e git+git@github.com:onpublico/django-gum.git@master#egg=django-gum
 
 2. Add "gum" to your INSTALLED_APPS settings like this::
 
