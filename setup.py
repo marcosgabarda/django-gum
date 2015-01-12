@@ -21,9 +21,6 @@ setup(
         'elasticsearch(>=1.0.0,<2.0.0)',
         'celery',
     ],
-    package_data={
-        'django-gum': []
-    },
     test_suite='tests',
     classifiers=[
         'Environment :: Web Environment',
