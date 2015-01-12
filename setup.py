@@ -5,7 +5,7 @@ from setuptools import setup
 
 setup(
     name='django-gum',
-    version='0.0.2',
+    version='0.1.0',
     description='Elasticsearch client with Django support.',
     author='Marcos Gabarda',
     author_email='marcosgabarda@gmail.com',
@@ -21,9 +21,9 @@ setup(
         'elasticsearch(>=1.0.0,<2.0.0)',
         'celery',
     ],
-    # package_data={
-    #     'django-gum': []
-    # },
+    package_data={
+        'django-gum': []
+    },
     test_suite='tests',
     classifiers=[
         'Environment :: Web Environment',

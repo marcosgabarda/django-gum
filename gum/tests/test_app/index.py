@@ -16,18 +16,20 @@ class PostMappingType(MappingType):
 
     def mapping(self):
         return {
-            "properties": {
-                "title": {
-                    "type": "string",
-                    "store": True,
-                },
-                "content": {
-                    "type": "string",
-                    "store": True,
-                },
-                "text": {
-                    "type": "string",
-                    "store": True,
+            self.get_type(): {
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "store": True,
+                    },
+                    "content": {
+                        "type": "string",
+                        "store": True,
+                    },
+                    "text": {
+                        "type": "string",
+                        "store": True,
+                    }
                 }
             }
         }

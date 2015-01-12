@@ -30,10 +30,15 @@ class GumTestBase(TestCase):
         es = elasticsearch_connection()
         mapping_type_name = Post.elasticsearch.mapping_type.get_type()
         response = es.indices.get_mapping(
+            index=TEST_SETTINGS["GUM_ELASTICSEARCH_INDEX"],
             doc_type=mapping_type_name
         )
+        # self.assertDictEqual(
+        #     response[TEST_SETTINGS["GUM_ELASTICSEARCH_INDEX"]]["mappings"][mapping_type_name],
+        #     Post.elasticsearch.mapping_type.mapping()
+        # )
         self.assertDictEqual(
-            response[TEST_SETTINGS["GUM_ELASTICSEARCH_INDEX"]]["mappings"][mapping_type_name],
+            response,
             Post.elasticsearch.mapping_type.mapping()
         )
 
