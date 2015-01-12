@@ -17,4 +17,5 @@ DEFAULT_INDICES = "_all"
 ELASTICSEARCH_INDICES = getattr(settings, "GUM_ELASTICSEARCH_INDEX", DEFAULT_ELASTICSEARCH_TIMEOUT)
 
 DEBUG = getattr(settings, 'GUM_DEBUG', False)
+USE_CELERY = getattr(settings, 'GUM_USE_CELERY', False)
 INDEX_FILES = tuple(getattr(settings, 'GUM_INDEX_FILES', ()))
