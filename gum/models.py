@@ -53,7 +53,7 @@ def autodiscover():
             if sys.argv[1] in ('runserver', 'runserver_plus'):
                 models = indexer.get_registered_models()
                 names = ', '.join(m.__name__ for m in models)
-                print('modeltranslation: Registered %d models for indexing'
+                print('gum: Registered %d models for indexing'
                       ' (%s) [pid: %d].' % (len(models), names, os.getpid()))
         except IndexError:
             pass

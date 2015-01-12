@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from setuptools import setup
 
-# Dynamically calculate the version based on modeltranslation.VERSION.
+# Dynamically calculate the version based on gum.VERSION.
 version = __import__('gum').get_version()
 
 setup(
