@@ -172,8 +172,8 @@ class Indexer(object):
             instances = model.objects.all()
             total_instances = instances.count()
             if stdout:
-                stdout.write("Indexing %s instances from %s " % str(total_instances, model))
-                stdout.write("Indexing %s instances from %s " % str(total_instances, model))
+                stdout.write("Indexing %s instances from %s " % (total_instances, str(model)))
+                stdout.write("Indexing %s instances from %s " % (total_instances, str(model)))
             mapping_type.create_mapping_type()
             for step, instance in enumerate(instances):
                 mapping_type.index_document(instance)
