@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.db.models.base import ModelBase
-from django.db.models.signals import pre_save, post_save, pre_delete
+from django.db.models.signals import post_save, pre_delete
 from gum.managers import ElasticsearchManager
 from gum.signals import handle_save, handle_delete
 
@@ -177,10 +177,16 @@ class Indexer(object):
             for step, instance in enumerate(instances):
                 mapping_type.index_document(instance)
                 if stdout:
-                    progress = int(((step + 1) / float(total_instances)) * 100)
+                    import os
+                    progress = int((step + 1) / float(total_instances))
+                    _, columns = os.popen('stty size', 'r').read().split()
+                    graph_progress = progress * min(columns, 100)
                     stdout.write('\r', ending='')
-                    stdout.write("[%-100s] %d%%" % ('='*progress, progress), ending='')
+                    progress_format = "[%-{}s] %d%%".format(min(columns, 100))
+                    stdout.write(progress_format % ('='*graph_progress, progress*100), ending='')
                     stdout.flush()
+            if stdout:
+                stdout.write('')
 
 # This global object represents the singleton indexer object
 indexer = Indexer()
