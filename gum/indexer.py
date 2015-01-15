@@ -177,7 +177,7 @@ class Indexer(object):
             for step, instance in enumerate(instances):
                 mapping_type.index_document(instance)
                 if stdout:
-                    progress = (step + 1) / total_instances
+                    progress = ((step + 1) / float(total_instances)) * 100
                     stdout.write('\r')
                     stdout.write("[%-100s] %d%%" % ('='*progress, progress))
                     stdout.flush()
