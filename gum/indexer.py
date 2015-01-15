@@ -178,8 +178,8 @@ class Indexer(object):
                 mapping_type.index_document(instance)
                 if stdout:
                     progress = int(((step + 1) / float(total_instances)) * 100)
-                    stdout.write('\r')
-                    stdout.write("[%-100s] %d%%" % ('='*progress, progress))
+                    stdout.write('\r', ending='')
+                    stdout.write("[%-100s] %d%%" % ('='*progress, progress), ending='')
                     stdout.flush()
 
 # This global object represents the singleton indexer object
