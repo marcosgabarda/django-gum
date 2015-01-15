@@ -13,6 +13,4 @@ class Command(BaseCommand):
         self.stdout.write('Initializing index...', ending='')
         indexer.initialize_index()
         self.stdout.write(' OK')
-        self.stdout.write('Updating index...', ending='')
         indexer.update_index(stdout=self.stdout)
-        self.stdout.write(' OK')
