@@ -10,5 +10,9 @@ class Command(BaseCommand):
     help = "Creates and updates index"
 
     def handle(self, *args, **options):
+        self.stdout.write('Initializing index...', ending='')
         indexer.initialize_index()
-        indexer.update_index()
+        self.stdout.write(' OK')
+        self.stdout.write('Updating index...', ending='')
+        indexer.update_index(stdout=self.stdout)
+        self.stdout.write(' OK')

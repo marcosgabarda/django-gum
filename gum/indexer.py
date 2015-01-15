@@ -166,14 +166,22 @@ class Indexer(object):
             if mapping_type.index != ELASTICSEARCH_INDICES:
                 es.indices.delete(index=mapping_type.index, ignore=400)
 
-    def update_index(self):
+    def update_index(self, stdout=None):
         """Update index for all registered models."""
         for model, mapping_type in self._registry.iteritems():
             instances = model.objects.all()
+            total_instances = instances.count()
+            if stdout:
+                stdout.write("Indexing %s instances from %s " % str(total_instances, model))
+                stdout.write("Indexing %s instances from %s " % str(total_instances, model))
             mapping_type.create_mapping_type()
-            for instance in instances:
+            for step, instance in enumerate(instances):
                 mapping_type.index_document(instance)
-
+                if stdout:
+                    progress = (step + 1) / total_instances
+                    stdout.write('\r')
+                    stdout.write("[%-100s] %d%%" % ('='*progress, progress))
+                    stdout.flush()
 
 # This global object represents the singleton indexer object
 indexer = Indexer()
