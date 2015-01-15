@@ -180,7 +180,7 @@ class Indexer(object):
                     import os
                     progress = int((step + 1) / float(total_instances))
                     _, columns = os.popen('stty size', 'r').read().split()
-                    graph_progress = progress * min(columns, 100)
+                    graph_progress = progress * min(columns - 10, 100)
                     stdout.write('\r', ending='')
                     progress_format = "[%-{}s] %d%%".format(min(columns, 100))
                     stdout.write(progress_format % ('='*graph_progress, progress*100), ending='')
