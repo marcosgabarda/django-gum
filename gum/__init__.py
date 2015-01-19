@@ -9,8 +9,9 @@ import datetime
 import os
 import subprocess
 
-VERSION = (0, 1, 2, 'alpha', 0)
+
 default_app_config = 'gum.apps.GumConfig'
+VERSION = (0, 2, 0, 'alpha', 0)
 
 
 def get_version(version=None):
