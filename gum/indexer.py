@@ -7,7 +7,7 @@ from gum.managers import ElasticsearchManager
 from gum.signals import handle_save, handle_delete
 
 from gum.utils import elasticsearch_connection
-from gum.settings import ELASTICSEARCH_INDICES
+from gum.settings import ELASTICSEARCH_INDICES, DEFAULT_ELASTICSEARCH_SETTINGS
 
 
 class AlreadyRegistered(Exception):
@@ -22,6 +22,8 @@ class MappingType(object):
 
     # Index to apply this mapping type
     index = None
+    # Settings used for previous index
+    settings = None
 
     def __init__(self, model):
         """Initialize a MappingType instance for a given
@@ -150,10 +152,14 @@ class Indexer(object):
         TODO: Add settings configuration of the index.
         """
         es = elasticsearch_connection()
-        es.indices.create(index=ELASTICSEARCH_INDICES, ignore=400)
+        es.indices.create(index=ELASTICSEARCH_INDICES, body=DEFAULT_ELASTICSEARCH_SETTINGS, ignore=400)
         for _, mapping_type in self._registry.iteritems():
             if mapping_type.index != ELASTICSEARCH_INDICES:
-                es.indices.create(index=mapping_type.index, ignore=400)
+                es.indices.create(
+                    index=mapping_type.index,
+                    body=mapping_type.settings or DEFAULT_ELASTICSEARCH_SETTINGS,
+                    ignore=400
+                )
 
     def remove_index(self):
         """Deletes used indices.
