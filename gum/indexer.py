@@ -69,6 +69,10 @@ class MappingType(object):
     def create_mapping_type(self):
         """Creates the Elasticsearch type."""
         es = elasticsearch_connection()
+        es.indices.delete_mapping(
+            index=self.index,
+            doc_type=self.get_type()
+        )
         es.indices.put_mapping(
             index=self.index,
             doc_type=self.get_type(),
@@ -172,26 +176,29 @@ class Indexer(object):
             if mapping_type.index != ELASTICSEARCH_INDICES:
                 es.indices.delete(index=mapping_type.index, ignore=400)
 
-    def update_index(self, stdout=None):
+    def update_index(self, stdout=None, only_mapping=False, restrict_to=None):
         """Update index for all registered models."""
         for model, mapping_type in self._registry.iteritems():
+            if restrict_to is not None and model not in restrict_to:
+                continue
             instances = model.objects.all()
             total_instances = instances.count()
             if stdout:
                 stdout.write("Indexing %s instances from %s " % (total_instances, str(model)))
             mapping_type.create_mapping_type()
-            for step, instance in enumerate(instances):
-                mapping_type.index_document(instance)
-                if stdout:
-                    import os
-                    progress = (step + 1) / float(total_instances)
-                    _, columns = os.popen('stty size', 'r').read().split()
-                    limit = min(int(columns) - 10, 100)
-                    graph_progress = int(progress * limit)
-                    stdout.write('\r', ending='')
-                    progress_format = "[%-{}s] %d%%".format(limit)
-                    stdout.write(progress_format % ('='*graph_progress, int(progress*100)), ending='')
-                    stdout.flush()
+            if not only_mapping:
+                for step, instance in enumerate(instances):
+                    mapping_type.index_document(instance)
+                    if stdout:
+                        import os
+                        progress = (step + 1) / float(total_instances)
+                        _, columns = os.popen('stty size', 'r').read().split()
+                        limit = min(int(columns) - 10, 100)
+                        graph_progress = int(progress * limit)
+                        stdout.write('\r', ending='')
+                        progress_format = "[%-{}s] %d%%".format(limit)
+                        stdout.write(progress_format % ('='*graph_progress, int(progress*100)), ending='')
+                        stdout.flush()
             if stdout:
                 stdout.write('')
 
