@@ -71,7 +71,8 @@ class MappingType(object):
         es = elasticsearch_connection()
         es.indices.delete_mapping(
             index=self.index,
-            doc_type=self.get_type()
+            doc_type=self.get_type(),
+            ignore=404
         )
         es.indices.put_mapping(
             index=self.index,
