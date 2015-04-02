@@ -13,14 +13,15 @@ def autodiscover():
     import sys
     import copy
     from django.conf import settings
-    from django.utils.importlib import import_module
     from django.utils.module_loading import module_has_submodule
     from gum.indexer import indexer
     from gum.settings import INDEX_FILES, DEBUG
 
     if django.VERSION < (1, 7):
+        from django.utils.importlib import import_module
         mods = [(app, import_module(app)) for app in settings.INSTALLED_APPS]
     else:
+        from importlib import import_module
         from django.apps import apps
         mods = [(app_config.name, app_config.module) for app_config in apps.get_app_configs()]
 
