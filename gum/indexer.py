@@ -182,7 +182,11 @@ class Indexer(object):
         for model, mapping_type in self._registry.iteritems():
             if restrict_to is not None and model not in restrict_to:
                 continue
-            instances = model.objects.all()
+            try:
+                instances = model.objects.all()
+            except AttributeError:
+                # Abstract model
+                instances = []
             total_instances = instances.count()
             if stdout:
                 stdout.write("Indexing %s instances from %s " % (total_instances, str(model)))
