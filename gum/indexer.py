@@ -88,12 +88,19 @@ class MappingType(object):
         :return:
         """
         es = elasticsearch_connection()
-        es.index(
-            index=self.index,
-            doc_type=self.get_type(),
-            id=self.get_id(instance),
-            body=self.document(instance)
-        )
+        try:
+            es.index(
+                index=self.index,
+                doc_type=self.get_type(),
+                id=self.get_id(instance),
+                body=self.document(instance)
+            )
+        except AttributeError:
+            es.index(
+                index=self.index,
+                doc_type=self.get_type(),
+                body=self.document(instance)
+            )
 
     def delete_document(self, instance):
         """Deletes an instance of the model.
