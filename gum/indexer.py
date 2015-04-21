@@ -191,10 +191,11 @@ class Indexer(object):
                 continue
             try:
                 instances = model.objects.all()
+                total_instances = instances.count()
             except AttributeError:
                 # Abstract model
                 instances = []
-            total_instances = instances.count()
+                total_instances = 0
             if stdout:
                 stdout.write("Indexing %s instances from %s " % (total_instances, str(model)))
             mapping_type.create_mapping_type()
