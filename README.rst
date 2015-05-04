@@ -9,7 +9,7 @@ Quick start
 
 1. Install using pip::
 
-    pip install -e git+git@github.com:onpublico/django-gum.git@master#egg=django-gum
+    pip install -e git+git@github.com:marcosgabarda/django-gum.git@master#egg=django-gum
 
 2. Add "gum" to your INSTALLED_APPS settings like this::
 
@@ -18,7 +18,12 @@ Quick start
            'gum',
        )
 
-3. Create an index.py in your app, with a content like this::
+3. Add Elasticsearch configuration to your settings like this::
+
+    GUM_ELASTICSEARCH_URLS = ["http://127.0.0.1:9200/"]
+    GUM_ELASTICSEARCH_INDEX = ".gum-tests"
+
+4. Create an index.py in your app, with a content like this::
 
     from gum.indexer import MappingType, indexer
 
@@ -52,7 +57,7 @@ Quick start
 
     indexer.register(Post, PostMappingType)
 
-4. Update Elasticsearch index::
+5. Update Elasticsearch index::
 
     ./manage.py update_index
 
