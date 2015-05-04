@@ -18,9 +18,9 @@ setup(
         'gum.management',
         'gum.management.commands'
     ],
-    requires=[
-        'django(>=1.4)',
-        'elasticsearch(>=1.0.0,<2.0.0)',
+    install_requires=[
+        'django>=1.4',
+        'elasticsearch>=1.0.0,<2.0.0',
         'celery',
     ],
     test_suite='tests',
