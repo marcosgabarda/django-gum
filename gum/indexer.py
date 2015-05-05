@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.db.models.base import ModelBase
 from django.db.models.signals import post_save, pre_delete
+import six
 from gum.managers import ElasticsearchManager
 from gum.signals import handle_save, handle_delete
 
@@ -165,7 +166,7 @@ class Indexer(object):
         """
         es = elasticsearch_connection()
         es.indices.create(index=ELASTICSEARCH_INDICES, body=DEFAULT_ELASTICSEARCH_SETTINGS, ignore=400)
-        for _, mapping_type in self._registry.iteritems():
+        for _, mapping_type in six.iteritems(self._registry):
             if mapping_type.index != ELASTICSEARCH_INDICES:
                 es.indices.create(
                     index=mapping_type.index,
@@ -180,13 +181,13 @@ class Indexer(object):
         """
         es = elasticsearch_connection()
         es.indices.delete(index=ELASTICSEARCH_INDICES, ignore=400)
-        for _, mapping_type in self._registry.iteritems():
+        for _, mapping_type in six.iteritems(self._registry):
             if mapping_type.index != ELASTICSEARCH_INDICES:
                 es.indices.delete(index=mapping_type.index, ignore=400)
 
     def update_index(self, stdout=None, only_mapping=False, restrict_to=None):
         """Update index for all registered models."""
-        for model, mapping_type in self._registry.iteritems():
+        for model, mapping_type in six.iteritems(self._registry):
             if restrict_to is not None and model not in restrict_to:
                 continue
             try:

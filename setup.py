@@ -22,6 +22,7 @@ setup(
         'django>=1.4',
         'elasticsearch>=1.0.0,<2.0.0',
         'celery',
+        'six'
     ],
     test_suite='tests',
     classifiers=[
