@@ -23,6 +23,14 @@ Quick start
     GUM_ELASTICSEARCH_URLS = ["http://127.0.0.1:9200/"]
     GUM_ELASTICSEARCH_INDEX = ".gum-tests"
 
+List of available configuration variables:
+
+* ``GUM_DEBUG`` (boolean)
+* ``GUM_USE_CELERY`` (boolean)
+* ``GUM_ELASTICSEARCH_URLS`` (list)
+* ``GUM_ELASTICSEARCH_INDEX`` (string)
+
+
 4. Create an index.py in your app, with a content like this::
 
     from gum.indexer import MappingType, indexer
@@ -59,7 +67,7 @@ Quick start
 
 5. Update Elasticsearch index::
 
-    ./manage.py update_index
+    ./manage.py gum_update_index
 
 Searching
 ---------
