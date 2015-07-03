@@ -20,11 +20,13 @@ def handle_save(sender_content_type_pk, instance_pk):
         instance = sender.objects.get(pk=instance_pk)
     except ObjectDoesNotExist:
         logger.warning("Object ({}, {}) not found".format(sender_content_type_pk, instance_pk))
+        return False
     try:
         mapping_type = indexer.get_mapping_type(sender)
         mapping_type.index_document(instance)
     except NotRegistered:
         logger.warning("Object ({}, {}) not register".format(sender_content_type_pk, instance_pk))
+        return False
     return True
 
 
@@ -38,8 +40,10 @@ def handle_delete(sender_content_type_pk, instance_pk):
         instance = sender.objects.get(pk=instance_pk)
     except ObjectDoesNotExist:
         logger.warning("Object ({}, {}) not found".format(sender_content_type_pk, instance_pk))
+        return False
     try:
         mapping_type = indexer.get_mapping_type(sender)
         mapping_type.delete_document(instance)
     except NotRegistered:
-        pass
+        return False
+    return True
