@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.db.models.base import ModelBase
 from django.db.models.signals import post_save, pre_delete
+import elasticsearch
 import six
 from gum.managers import ElasticsearchManager
 from gum.signals import handle_save, handle_delete
@@ -110,11 +111,14 @@ class MappingType(object):
         :return:
         """
         es = elasticsearch_connection()
-        es.delete(
-            index=self.index,
-            doc_type=self.get_type(),
-            id=self.get_id(instance),
-        )
+        try:
+            es.delete(
+                index=self.index,
+                doc_type=self.get_type(),
+                id=self.get_id(instance),
+            )
+        except elasticsearch.exceptions.NotFoundError:
+            pass
 
 
 class Indexer(object):
