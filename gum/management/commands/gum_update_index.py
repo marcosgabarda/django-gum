@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 
 from gum.indexer import indexer
 
@@ -27,7 +27,7 @@ class Command(BaseCommand):
                 model_class = get_model(app_name, model_name)
                 selected_models.append(model_class)
             except (ValueError, LookupError):
-                pass
+                raise CommandError("Model not found for indexing")
         restrict_to = selected_models if selected_models else None
 
         self.stdout.write('Initializing index...', ending='')
