@@ -15,6 +15,8 @@ class ElasticsearchManager(object):
     def search(self, **kwargs):
         """Partial application of `search` function from Elasticsearch
         module.
+
+        :param kwargs:
         """
         es = elasticsearch_connection()
         if 'index' not in kwargs:

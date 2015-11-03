@@ -1,15 +1,16 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db.models.base import ModelBase
-from django.db.models.signals import post_save, pre_delete
 import elasticsearch
 import six
-from gum.managers import ElasticsearchManager
-from gum.signals import handle_save, handle_delete
+from django.db import models
+from django.db.models.base import ModelBase
+from django.db.models.signals import post_save, pre_delete
 
-from gum.utils import elasticsearch_connection
+from gum.managers import ElasticsearchManager
 from gum.settings import ELASTICSEARCH_INDICES, DEFAULT_ELASTICSEARCH_SETTINGS
+from gum.signals import handle_save, handle_delete
+from gum.utils import elasticsearch_connection
 
 
 class AlreadyRegistered(Exception):
@@ -178,6 +179,21 @@ class Indexer(object):
                     ignore=400
                 )
 
+    def update_settings(self):
+        """Updates the settings of the indexes."""
+        es = elasticsearch_connection()
+        es.indices.close(index=ELASTICSEARCH_INDICES)
+        es.indices.put_settings(index=ELASTICSEARCH_INDICES, body=DEFAULT_ELASTICSEARCH_SETTINGS)
+        es.indices.open(index=ELASTICSEARCH_INDICES)
+        for _, mapping_type in six.iteritems(self._registry):
+            if mapping_type.index != ELASTICSEARCH_INDICES:
+                es.indices.close(index=mapping_type.index)
+                es.indices.put_settings(
+                    index=mapping_type.index,
+                    body=mapping_type.settings or DEFAULT_ELASTICSEARCH_SETTINGS,
+                )
+                es.indices.open(index=mapping_type.index)
+
     def remove_index(self):
         """Deletes used indices.
 
@@ -194,11 +210,16 @@ class Indexer(object):
         for model, mapping_type in six.iteritems(self._registry):
             if restrict_to is not None and model not in restrict_to:
                 continue
-            try:
-                instances = model.objects.all()
-                total_instances = instances.count()
-            except AttributeError:
-                # Abstract model
+            if issubclass(model, models.Model):
+                try:
+                    instances = model.objects.all()
+                    total_instances = instances.count()
+                except AttributeError:
+                    # Abstract model
+                    instances = []
+                    total_instances = 0
+            else:
+                # Object, not a Django model
                 instances = []
                 total_instances = 0
             if stdout:
