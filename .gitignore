@@ -37,3 +37,6 @@ tramp
 # Windows
 Thumbs.db
 Desktop.ini
+
+# Others
+dist/

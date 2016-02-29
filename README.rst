@@ -1,14 +1,17 @@
-# Django Gum
+==========
+Django Gum
+==========
 
-Gum is a Django app for integrate Elasticsearch with Django.
+Gum is a Django app for integrate Elasticsearch 1.x with Django.
 
-## Quick start
+Quick start
+-----------
 
-**1** Install using pip:
+**1** Install using pip::
 
-    pip install -e git+git@github.com:marcosgabarda/django-gum.git@master#egg=django-gum
+    pip install django-gum
 
-**2** Add "gum" to your INSTALLED_APPS settings like this:
+**2** Add "gum" to your INSTALLED_APPS settings like this::
 
     INSTALLED_APPS += ('gum',)
 
@@ -25,7 +28,7 @@ List of available configuration variables:
 * ``GUM_ELASTICSEARCH_INDEX`` (string)
 
 
-**4** Create an index.py in your app, with a content like this:
+**4** Create an index.py in your app, with a content like this::
 
     from gum.indexer import MappingType, indexer
 
@@ -59,11 +62,16 @@ List of available configuration variables:
 
     indexer.register(Post, PostMappingType)
 
-**5** Update Elasticsearch index:
+**5** Update Elasticsearch index::
 
     ./manage.py gum --update-index
 
-## Searching
+You can specify the models you want to index::
+
+    ./manage.py gum --update-index blog.Post
+
+Searching
+---------
 
 You can perform Elasticsearch searches (accessing ``search`` method) using ``elasticseaech`` model
 attribute::

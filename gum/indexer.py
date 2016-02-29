@@ -42,7 +42,9 @@ class MappingType(object):
         super(MappingType, self).__init__()
 
     def get_id(self, instance):
-        """Gets the internal Elasticsearch id for instance."""
+        """Gets the internal Elasticsearch id for instance.
+        :param instance:
+        """
         return instance.pk
 
     def get_type(self):
