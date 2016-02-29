@@ -11,11 +11,13 @@ import subprocess
 
 
 default_app_config = 'gum.apps.GumConfig'
-VERSION = (0, 2, 0, 'alpha', 0)
+VERSION = (1, 0, 0, 'rc', 1)
 
 
 def get_version(version=None):
-    """Returns a PEP 386-compliant version number from VERSION."""
+    """Returns a PEP 386-compliant version number from VERSION.
+    :param version:
+    """
     if version is None:
         from gum import VERSION as version
     else:
@@ -52,8 +54,8 @@ def get_git_changeset():
     """
     repo_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     git_log = subprocess.Popen('git log --pretty=format:%ct --quiet -1 HEAD',
-            stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-            shell=True, cwd=repo_dir, universal_newlines=True)
+                               stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                               shell=True, cwd=repo_dir, universal_newlines=True)
     timestamp = git_log.communicate()[0]
     try:
         timestamp = datetime.datetime.utcfromtimestamp(int(timestamp))

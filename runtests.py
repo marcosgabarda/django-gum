@@ -7,7 +7,7 @@ from django.conf import settings
 from django.core.management import call_command
 
 
-def runtests():
+def run_tests():
     if not settings.configured:
         DATABASES = {
             'default': {
@@ -24,9 +24,9 @@ def runtests():
                 'gum.tests',
                 'gum.tests.test_app',
             ),
-            GUM_DEBUG = True,
-            GUM_ELASTICSEARCH_URLS = ["http://127.0.0.1:9200/"],
-            GUM_ELASTICSEARCH_INDEX = ".gum-tests",
+            GUM_DEBUG=True,
+            GUM_ELASTICSEARCH_URLS=["http://127.0.0.1:9200/"],
+            GUM_ELASTICSEARCH_INDEX=".gum-tests",
             ROOT_URLCONF=None,
             MIDDLEWARE_CLASSES=(),
         )
@@ -41,4 +41,4 @@ def runtests():
         sys.exit(bool(failures))
 
 if __name__ == '__main__':
-    runtests()
+    run_tests()

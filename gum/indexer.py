@@ -134,6 +134,8 @@ class Indexer(object):
         The model(s) should be Model classes, not instances.
 
         If a model is already registered, this will raise AlreadyRegistered.
+        :param mapping_type_class:
+        :param model_or_iterable:
         """
         if not mapping_type_class:
             mapping_type_class = MappingType
@@ -158,7 +160,9 @@ class Indexer(object):
         return [model for (model, mapping_type_class) in self._registry.items()]
 
     def get_mapping_type(self, model):
-        """Gets the mapping type insance for a given `model` class."""
+        """Gets the mapping type instance for a given `model` class.
+        :param model:
+        """
         try:
             return self._registry[model]
         except KeyError:
@@ -206,7 +210,11 @@ class Indexer(object):
                 es.indices.delete(index=mapping_type.index, ignore=400)
 
     def update_index(self, stdout=None, only_mapping=False, restrict_to=None):
-        """Update index for all registered models."""
+        """Update index for all registered models.
+        :param restrict_to:
+        :param only_mapping:
+        :param stdout:
+        """
         for model, mapping_type in six.iteritems(self._registry):
             if restrict_to is not None and model not in restrict_to:
                 continue

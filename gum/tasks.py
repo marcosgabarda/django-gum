@@ -12,7 +12,10 @@ logger = get_task_logger(__name__)
 
 @task
 def handle_save(sender_content_type_pk, instance_pk):
-    """Async task to handle the indexation of a model."""
+    """Async task to handle the indexation of a model.
+    :param instance_pk:
+    :param sender_content_type_pk:
+    """
     from gum.indexer import indexer, NotRegistered
     try:
         sender_content_type = ContentType.objects.get(pk=sender_content_type_pk)
@@ -32,7 +35,10 @@ def handle_save(sender_content_type_pk, instance_pk):
 
 @task
 def handle_delete(sender_content_type_pk, instance_pk):
-    """Async task to delete a model from the index."""
+    """Async task to delete a model from the index.
+    :param instance_pk:
+    :param sender_content_type_pk:
+    """
     from gum.indexer import indexer, NotRegistered
     try:
         sender_content_type = ContentType.objects.get(pk=sender_content_type_pk)

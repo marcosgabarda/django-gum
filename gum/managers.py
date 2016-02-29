@@ -9,8 +9,8 @@ class ElasticsearchManager(object):
     """
 
     def __init__(self, model=None, mapping_type=None):
-        self.model = None
-        self.mapping_type = None
+        self.model = model
+        self.mapping_type = mapping_type
 
     def search(self, **kwargs):
         """Partial application of `search` function from Elasticsearch
@@ -24,3 +24,11 @@ class ElasticsearchManager(object):
         if 'doc_type' not in kwargs:
             kwargs["doc_type"] = self.mapping_type.get_type()
         return es.search(**kwargs)
+
+    def index(self, instance):
+        """Shortcut to index an instance.
+
+        :param instance:
+        :return:
+        """
+        return self.mapping_type.index_document(instance)

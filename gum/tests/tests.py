@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+from __future__ import unicode_literals, print_function
 import time
 
+import six
+from django.core.management import call_command
 from django.test import override_settings, TestCase
 from model_mommy import mommy
 
@@ -33,12 +35,8 @@ class GumTestBase(TestCase):
             index=TEST_SETTINGS["GUM_ELASTICSEARCH_INDEX"],
             doc_type=mapping_type_name
         )
-        # self.assertDictEqual(
-        #     response[TEST_SETTINGS["GUM_ELASTICSEARCH_INDEX"]]["mappings"][mapping_type_name],
-        #     Post.elasticsearch.mapping_type.mapping()
-        # )
         self.assertDictEqual(
-            response,
+            response.get(TEST_SETTINGS["GUM_ELASTICSEARCH_INDEX"], {}).get("mappings"),
             Post.elasticsearch.mapping_type.mapping()
         )
 
@@ -47,7 +45,7 @@ class GumTestBase(TestCase):
         mommy.make("test_app.Post", _quantity=number_of_posts)
         self.assertEquals(Post.objects.count(), number_of_posts)
         # Index isn't available at this moment, we have to wait
-        time.sleep(1)
+        time.sleep(2)
         # Gets all indexed documents
         response = Post.elasticsearch.search(body={
             "query": {
@@ -61,11 +59,11 @@ class GumTestBase(TestCase):
         mommy.make("test_app.Post", _quantity=number_of_posts)
         self.assertEquals(Post.objects.count(), number_of_posts)
         # Index isn't available at this moment, we have to wait
-        time.sleep(1)
+        time.sleep(2)
         # Delete a post
         post = Post.objects.all()[0]
         post.delete()
-        time.sleep(1)
+        time.sleep(2)
         # Gets all indexed documents
         response = Post.elasticsearch.search(body={
             "query": {
@@ -73,3 +71,8 @@ class GumTestBase(TestCase):
             }
         })
         self.assertEquals(response["hits"]["total"], number_of_posts - 1)
+
+    def test_command_gum(self):
+        out = six.StringIO()
+        call_command("gum", "--update-index", "test_app.Post", stdout=out)
+        self.assertIn("Initializing index... OK", out.getvalue())
