@@ -4,6 +4,10 @@ Django Gum
 
 Gum is a Django app for integrate Elasticsearch 1.x with Django.
 
+.. image:: https://badge.fury.io/py/django-gum.svg
+    :target: https://badge.fury.io/py/django-gum
+
+
 Quick start
 -----------
 
