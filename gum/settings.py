@@ -7,9 +7,15 @@ from django.conf import settings
 DEFAULT_ELASTICSEARCH_URLS = ["http://127.0.0.1:9200/"]
 ELASTICSEARCH_URLS = getattr(settings, "GUM_ELASTICSEARCH_URLS", DEFAULT_ELASTICSEARCH_URLS)
 
-# Timeout for connection to Elasticsearch
+# Params for connection to Elasticsearch
 DEFAULT_ELASTICSEARCH_TIMEOUT = 5
 ELASTICSEARCH_TIMEOUT = getattr(settings, "GUM_ELASTICSEARCH_TIMEOUT", DEFAULT_ELASTICSEARCH_TIMEOUT)
+DEFAULT_ELASTICSEARCH_CONNECTION_PARAMS = {
+    "timeout": ELASTICSEARCH_TIMEOUT
+}
+ELASTICSEARCH_CONNECTION_PARAMS = getattr(
+    settings, "GUM_ELASTICSEARCH_CONNECTION_PARAMS", DEFAULT_ELASTICSEARCH_CONNECTION_PARAMS
+)
 
 # A comma-separated list of index names the alias should point to (supports wildcards);
 # use _all or omit to perform the operation on all indices.
