@@ -1,0 +1,28 @@
+# Config file for automatic testing at travis-ci.org
+
+language: python
+
+python:
+  - "3.5"
+  - "2.7"
+
+services:
+  - elasticsearch
+
+before_script:
+  - sleep 20
+
+before_install:
+  - pip install --quiet coveralls
+  - pip install codecov
+  - curl -O https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.7.1.deb && sudo dpkg -i --force-confnew elasticsearch-1.7.1.deb
+
+
+install:
+  - pip install -r requirements-test.txt
+
+script:
+  - coverage run runtests.py
+
+after_success:
+  - coveralls
