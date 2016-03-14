@@ -22,7 +22,7 @@ install:
   - pip install -r requirements-test.txt
 
 script:
-  - coverate run runtests.py
+  - coverage run runtests.py
 
 after_success:
   - coveralls
