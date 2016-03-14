@@ -10,7 +10,7 @@ services:
   - elasticsearch
 
 before_script:
-  - sleep 10
+  - sleep 20
 
 before_install:
   - pip install --quiet coveralls
