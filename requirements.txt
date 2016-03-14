@@ -1,4 +1,2 @@
-django>=1.4
+django>=1.5
 elasticsearch>=1.0.0,<2.0.0
-
-# Additional requirements go here
