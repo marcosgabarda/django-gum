@@ -40,3 +40,4 @@ Desktop.ini
 
 # Others
 dist/
+.coverage
