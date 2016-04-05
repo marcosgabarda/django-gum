@@ -59,11 +59,11 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         actions = {
-            "update-settings", self._update_settings,
-            "remove", self._remove_index,
+            "update-settings": self._update_settings,
+            "remove": self._remove_index,
         }
         action = options.get("action")
         if action in actions:
             actions[options.get("action")]()
-        if "update-index" in options:
+        elif "update-index" in options:
             self._update_index(options.get("update-index"))

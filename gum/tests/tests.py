@@ -72,7 +72,12 @@ class GumTestBase(TestCase):
         })
         self.assertEquals(response["hits"]["total"], number_of_posts - 1)
 
-    def test_command_gum(self):
+    def test_command_gum_update_index(self):
         out = six.StringIO()
         call_command("gum", "--update-index", "test_app.Post", stdout=out)
         self.assertIn("Initializing index... OK", out.getvalue())
+
+    def test_command_gum_update_settings(self):
+        out = six.StringIO()
+        call_command("gum", "--update-settings", stdout=out)
+        self.assertIn("Updating index settings...  OK", out.getvalue())

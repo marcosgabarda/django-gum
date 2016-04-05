@@ -18,7 +18,7 @@ class ElasticsearchManager(object):
 
         :param kwargs:
         """
-        es = elasticsearch_connection()
+        es = self.mapping_type.get_elasticsearch_connection()
         if 'index' not in kwargs:
             kwargs["index"] = self.mapping_type.index
         if 'doc_type' not in kwargs:

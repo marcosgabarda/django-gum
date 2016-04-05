@@ -23,6 +23,8 @@ class NotRegistered(Exception):
 
 class MappingType(object):
 
+    # Custom URLs for connecting to an specific Elasticsearch server
+    urls = None
     # Index to apply this mapping type
     index = None
     # Settings used for previous index
@@ -53,6 +55,10 @@ class MappingType(object):
             self.model._meta.app_label, self.model._meta.model_name
         )
 
+    def get_elasticsearch_connection(self):
+        """Gets the Elasticsearch connection with the urls attribute"""
+        return elasticsearch_connection(urls=self.urls)
+
     def mapping(self):
         """Gets the mapping of a given model. Only uses the model class, not
         the instance.
@@ -73,7 +79,7 @@ class MappingType(object):
 
     def create_mapping_type(self):
         """Creates the Elasticsearch type."""
-        es = elasticsearch_connection()
+        es = self.get_elasticsearch_connection()
         es.indices.delete_mapping(
             index=self.index,
             doc_type=self.get_type(),
@@ -92,7 +98,7 @@ class MappingType(object):
         :param instance:
         :return:
         """
-        es = elasticsearch_connection()
+        es = self.get_elasticsearch_connection()
         try:
             es.index(
                 index=self.index,
@@ -113,7 +119,7 @@ class MappingType(object):
         :param instance:
         :return:
         """
-        es = elasticsearch_connection()
+        es = self.get_elasticsearch_connection()
         try:
             es.delete(
                 index=self.index,
@@ -178,8 +184,9 @@ class Indexer(object):
         es = elasticsearch_connection()
         es.indices.create(index=ELASTICSEARCH_INDICES, body=DEFAULT_ELASTICSEARCH_SETTINGS, ignore=400)
         for _, mapping_type in six.iteritems(self._registry):
-            if mapping_type.index != ELASTICSEARCH_INDICES:
-                es.indices.create(
+            mapping_type_es = mapping_type.get_elasticsearch_connection()
+            if mapping_type.index != ELASTICSEARCH_INDICES or mapping_type.urls is not None:
+                mapping_type_es.indices.create(
                     index=mapping_type.index,
                     body=mapping_type.settings or DEFAULT_ELASTICSEARCH_SETTINGS,
                     ignore=400
@@ -192,13 +199,14 @@ class Indexer(object):
         es.indices.put_settings(index=ELASTICSEARCH_INDICES, body=DEFAULT_ELASTICSEARCH_SETTINGS)
         es.indices.open(index=ELASTICSEARCH_INDICES)
         for _, mapping_type in six.iteritems(self._registry):
-            if mapping_type.index != ELASTICSEARCH_INDICES:
-                es.indices.close(index=mapping_type.index)
-                es.indices.put_settings(
+            mapping_type_es = mapping_type.get_elasticsearch_connection()
+            if mapping_type.index != ELASTICSEARCH_INDICES or mapping_type.urls is not None:
+                mapping_type_es.indices.close(index=mapping_type.index)
+                mapping_type_es.indices.put_settings(
                     index=mapping_type.index,
                     body=mapping_type.settings or DEFAULT_ELASTICSEARCH_SETTINGS,
                 )
-                es.indices.open(index=mapping_type.index)
+                mapping_type_es.indices.open(index=mapping_type.index)
 
     def remove_index(self):
         """Deletes used indices.
@@ -208,8 +216,9 @@ class Indexer(object):
         es = elasticsearch_connection()
         es.indices.delete(index=ELASTICSEARCH_INDICES, ignore=400)
         for _, mapping_type in six.iteritems(self._registry):
-            if mapping_type.index != ELASTICSEARCH_INDICES:
-                es.indices.delete(index=mapping_type.index, ignore=400)
+            mapping_type_es = mapping_type.get_elasticsearch_connection()
+            if mapping_type.index != ELASTICSEARCH_INDICES or mapping_type.urls is not None:
+                mapping_type_es.indices.delete(index=mapping_type.index, ignore=400)
 
     def update_index(self, stdout=None, only_mapping=False, restrict_to=None):
         """Update index for all registered models.
