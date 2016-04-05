@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from elasticsearch import Elasticsearch
 
-from gum.settings import ELASTICSEARCH_URLS, ELASTICSEARCH_TIMEOUT, ELASTICSEARCH_CONNECTION_PARAMS
+from gum.settings import ELASTICSEARCH_URLS, ELASTICSEARCH_CONNECTION_PARAMS
 
 
 def _build_key(urls):

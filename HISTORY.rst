@@ -3,6 +3,17 @@
 History
 -------
 
+1.1.0
++++++
+
+* Added ``urls`` attribute to MappingType to be able to custom urls of Elasticsearch servers
+
+1.0.1 (2016-03-31)
+++++++++++++++++++
+
+* Fixed problem running --update-settings
+
+
 1.0.0 (2016-03-24)
 ++++++++++++++++++
 
