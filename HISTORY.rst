@@ -3,6 +3,13 @@
 History
 -------
 
+1.1.0 (2016-04-05)
+++++++++++++++++++
+
+* Added ``urls`` attribute to ``MappingType`` to be able to custom urls of Elasticsearch servers
+* Added ``GenericElasticsearchManager`` class to make queries without specific ``MappingType`` class
+
+
 1.0.1 (2016-03-31)
 ++++++++++++++++++
 
