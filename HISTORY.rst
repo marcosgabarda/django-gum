@@ -7,6 +7,7 @@ History
 +++++
 
 * Added ``urls`` attribute to MappingType to be able to custom urls of Elasticsearch servers
+* Added GenericElasticsearchManager to make queries without specific MappingType class
 
 1.0.1 (2016-03-31)
 ++++++++++++++++++
