@@ -86,7 +86,7 @@ You can specify the models you want to index::
 Searching
 ---------
 
-You can perform Elasticsearch searches (accessing ``search`` method) using ``elasticseaech`` model
+You can perform Elasticsearch searches (accessing ``search`` method) using ``elasticsearch`` model
 attribute::
 
     response = Post.elasticsearch.search(body={

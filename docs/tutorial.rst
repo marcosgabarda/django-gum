@@ -1,29 +1,55 @@
-==========
-Quickstart
-==========
+.. _ref-tutorial:
 
-**1** Install using pip::
+===============
+Getting Started
+===============
+
+
+Installation
+============
+
+Use your PyPI to install the app::
 
     pip install django-gum
 
-**2** Add "gum" to your INSTALLED_APPS settings like this::
+
+Configuration
+=============
+
+Add Gum to ``INSTALLED_APPS``
+-----------------------------
+
+As with most Django applications, you should add Gum to the
+``INSTALLED_APPS`` within your settings file (usually ``settings.py``).
+
+Example::
 
     INSTALLED_APPS += ('gum',)
 
-**3** Add Elasticsearch configuration to your settings like this::
+
+Modify your ``settings.py``
+---------------------------
+
+You have to add to your settings file where is the Elasticsearch server you
+want to use and which'll be the default index.
+
+Example::
 
     GUM_ELASTICSEARCH_URLS = ["http://127.0.0.1:9200/"]
     GUM_ELASTICSEARCH_INDEX = ".gum-tests"
 
-List of available configuration variables:
 
-* ``GUM_DEBUG`` (boolean)
-* ``GUM_USE_CELERY`` (boolean)
-* ``GUM_ELASTICSEARCH_URLS`` (list)
-* ``GUM_ELASTICSEARCH_INDEX`` (string)
+Handling data
+=============
 
+Linking models and mapping
+--------------------------
 
-**4** Create an index.py in your app, with a content like this::
+Each model have to has a `Mapping Type <https://www.elastic.co/guide/en/elasticsearch/reference/current/mapping.html#mapping-type>`_ associated
+whit it. To do this, you have to create an ``index.py`` file inside your app and create a ``MappingType`` class, and
+register this class with the model.
+
+Example::
 
     from gum.indexer import MappingType, indexer
 
@@ -57,19 +83,25 @@ List of available configuration variables:
 
     indexer.register(Post, PostMappingType)
 
-**5** Update Elasticsearch index::
+
+Updating index
+--------------
+
+You can use this command to update all registers models::
 
     ./manage.py gum --update-index
 
-You can specify the models you want to index::
+Or you can only update specified models::
 
     ./manage.py gum --update-index blog.Post
 
-Searching
----------
+Making queries
+--------------
 
 You can perform Elasticsearch searches (accessing ``search`` method) using ``elasticseaech`` model
-attribute::
+attribute.
+
+Example::
 
     response = Post.elasticsearch.search(body={
         "query": {
