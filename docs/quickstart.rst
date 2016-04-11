@@ -1,21 +1,6 @@
 ==========
-Django Gum
+Quickstart
 ==========
-
-Gum is a Django app for integrate Elasticsearch 1.x with Django.
-
-.. image:: https://badge.fury.io/py/django-gum.svg
-    :target: https://badge.fury.io/py/django-gum
-
-.. image:: https://img.shields.io/pypi/dm/django-gum.svg
-    :target: https://pypi.python.org/pypi/django-gum
-
-.. image:: https://travis-ci.org/marcosgabarda/django-gum.svg?branch=master
-    :target: https://travis-ci.org/marcosgabarda/django-gum
-
-
-Quick start
------------
 
 **1** Install using pip::
 
