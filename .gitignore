@@ -39,5 +39,6 @@ Thumbs.db
 Desktop.ini
 
 # Others
+docs/_build
 dist/
 .coverage
