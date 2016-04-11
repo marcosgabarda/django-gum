@@ -15,6 +15,7 @@ package **DOES NOT** give you API like Django ORM.
    :maxdepth: 2
 
    tutorial
+   settings
 
 
 Indices and tables
@@ -23,4 +24,3 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
-
