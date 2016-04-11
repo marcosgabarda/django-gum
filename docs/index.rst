@@ -6,9 +6,10 @@
 Welcome to Django Gum!
 ======================
 
-Django Gum provides an easy way to integrate Django with Elasticsearch. It can be
-use for indexing models, handle mappings and make queries. The design was made
-assuming the user has some knowledge about how Elasticsearch works, therefore, this
+Django Gum provides an easy way to integrate Django with **Elasticsearch 1.7.X**.
+It can be use for indexing models, handle mappings and make queries.
+
+The design was made assuming the user has some knowledge about how Elasticsearch works, therefore, this
 package **DOES NOT** give you API like Django ORM.
 
 .. toctree::
@@ -16,6 +17,12 @@ package **DOES NOT** give you API like Django ORM.
 
    tutorial
    settings
+   commands
+
+.. note::
+
+    This package was initialy developed for `Onpublico <https://onpublico.com>`_
+    project.
 
 
 Indices and tables
