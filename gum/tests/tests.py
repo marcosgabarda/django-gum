@@ -2,12 +2,14 @@
 from __future__ import unicode_literals, print_function
 import time
 
+import datetime
 import six
 from django.contrib.contenttypes.models import ContentType
 from django.core.management import call_command
 from django.test import override_settings, TestCase
 from model_mommy import mommy
 
+from gum import get_version, get_git_changeset
 from gum.indexer import indexer
 from gum.tasks import handle_save, handle_delete
 from gum.tests.test_app.models import Post, Tag
@@ -129,3 +131,18 @@ class GumTasksTest(GumTestBase):
             }
         })
         self.assertEquals(response["hits"]["total"], 0)
+
+
+class GumVersionTest(TestCase):
+
+    def test_version(self):
+        version = get_version(version=(1, 0, 0, 'final', 0))
+        self.assertEquals(version, "1.0")
+        version = get_version(version=(1, 1, 0, 'final', 0))
+        self.assertEquals(version, "1.1")
+        version = get_version(version=(1, 1, 1, 'final', 0))
+        self.assertEquals(version, "1.1.1")
+
+    def test_git_changeset(self):
+        version = get_git_changeset()
+        self.assertIsNotNone(version)
