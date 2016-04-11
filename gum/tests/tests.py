@@ -2,18 +2,21 @@
 from __future__ import unicode_literals, print_function
 import time
 
+import datetime
 import six
+from django.contrib.contenttypes.models import ContentType
 from django.core.management import call_command
 from django.test import override_settings, TestCase
 from model_mommy import mommy
 
+from gum import get_version, get_git_changeset
 from gum.indexer import indexer
+from gum.tasks import handle_save, handle_delete
 from gum.tests.test_app.models import Post, Tag
-from gum.tests.test_settings import TEST_SETTINGS
+from gum.tests.test_settings import TEST_SETTINGS, TASKS_TEST_SETTINGS
 from gum.utils import elasticsearch_connection
 
 
-@override_settings(**TEST_SETTINGS)
 class GumTestBase(TestCase):
 
     def setUp(self):
@@ -22,6 +25,10 @@ class GumTestBase(TestCase):
 
     def tearDown(self):
         indexer.remove_index()
+
+
+@override_settings(**TEST_SETTINGS)
+class GumTest(GumTestBase):
 
     def test_registered_models(self):
         registered_models = indexer.get_registered_models()
@@ -81,3 +88,61 @@ class GumTestBase(TestCase):
         out = six.StringIO()
         call_command("gum", "--update-settings", stdout=out)
         self.assertIn("Updating index settings...  OK", out.getvalue())
+
+
+@override_settings(**TASKS_TEST_SETTINGS)
+class GumTasksTest(GumTestBase):
+
+    def test_task_handle_save(self):
+        number_of_posts = 5
+        mommy.make("test_app.Post", _quantity=number_of_posts)
+        self.assertEquals(Post.objects.count(), number_of_posts)
+        # Check there is no indexed documents
+        response = Post.elasticsearch.search(body={
+            "query": {
+                "match_all": {}
+            }
+        })
+        self.assertEquals(response["hits"]["total"], 0)
+        # Launch task...
+        content_type = ContentType.objects.get_for_model(Post.objects.first())
+        for post in Post.objects.all():
+            handle_save(sender_content_type_pk=content_type.pk, instance_pk=post.pk)
+        time.sleep(2)
+        # Gets all indexed documents
+        response = Post.elasticsearch.search(body={
+            "query": {
+                "match_all": {}
+            }
+        })
+        self.assertEquals(response["hits"]["total"], number_of_posts)
+
+    def test_task_handle_delete(self):
+        self.test_task_handle_save()
+        # Launch task...
+        content_type = ContentType.objects.get_for_model(Post.objects.first())
+        for post in Post.objects.all():
+            handle_delete(sender_content_type_pk=content_type.pk, instance_pk=post.pk)
+        time.sleep(2)
+        # Gets all indexed documents
+        response = Post.elasticsearch.search(body={
+            "query": {
+                "match_all": {}
+            }
+        })
+        self.assertEquals(response["hits"]["total"], 0)
+
+
+class GumVersionTest(TestCase):
+
+    def test_version(self):
+        version = get_version(version=(1, 0, 0, 'final', 0))
+        self.assertEquals(version, "1.0")
+        version = get_version(version=(1, 1, 0, 'final', 0))
+        self.assertEquals(version, "1.1")
+        version = get_version(version=(1, 1, 1, 'final', 0))
+        self.assertEquals(version, "1.1.1")
+
+    def test_git_changeset(self):
+        version = get_git_changeset()
+        self.assertIsNotNone(version)
