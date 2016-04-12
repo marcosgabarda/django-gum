@@ -23,11 +23,3 @@ package **DOES NOT** give you API like Django ORM.
 
     This package was initialy developed for `Onpublico <https://onpublico.com>`_
     project.
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

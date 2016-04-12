@@ -7,7 +7,11 @@ from gum.settings import ELASTICSEARCH_URLS, ELASTICSEARCH_CONNECTION_PARAMS
 
 
 def _build_key(urls):
-    key = (urls,)
+    try:
+        _ = iter(urls)
+    except TypeError:
+        urls = [urls]
+    key = ",".join(urls)
     return key
 
 
@@ -19,7 +23,7 @@ def elasticsearch_connection(urls=None):
     :param urls:
     """
     connection_urls = urls or ELASTICSEARCH_URLS
-    key = _build_key(urls)
+    key = _build_key(connection_urls)
     if key in _cached_elasticsearch:
         return _cached_elasticsearch[key]
     try:

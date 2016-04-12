@@ -11,6 +11,7 @@ from model_mommy import mommy
 
 from gum import get_version, get_git_changeset
 from gum.indexer import indexer
+from gum.managers import GenericElasticsearchManager
 from gum.tasks import handle_save, handle_delete
 from gum.tests.test_app.models import Post, Tag
 from gum.tests.test_settings import TEST_SETTINGS, TASKS_TEST_SETTINGS
@@ -88,6 +89,15 @@ class GumTest(GumTestBase):
         out = six.StringIO()
         call_command("gum", "--update-settings", stdout=out)
         self.assertIn("Updating index settings...  OK", out.getvalue())
+
+    def test_alternative_connection(self):
+        from django.conf import settings
+        self.assertIsNotNone(settings.GUM_ELASTICSEARCH_URLS_ALT)
+        elasticsearch = GenericElasticsearchManager(urls=settings.GUM_ELASTICSEARCH_URLS_ALT)
+        self.assertIsInstance(elasticsearch, GenericElasticsearchManager)
+        query = {"query": {"match_all": {}}}
+        results = elasticsearch.search(index="_all", doc_type="", body=query)
+        self.assertIn("hits", results)
 
 
 @override_settings(**TASKS_TEST_SETTINGS)
