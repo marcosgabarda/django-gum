@@ -3,6 +3,12 @@
 History
 -------
 
+1.1.1 (2016-04-12)
+++++++++++++++++++
+
+* Fixed problem building connections cache key
+* Updated documentation
+
 1.1.0 (2016-04-05)
 ++++++++++++++++++
 
