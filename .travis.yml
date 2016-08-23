@@ -5,8 +5,8 @@ language: python
 python:
   - "3.5"
 
-services:
-  - elasticsearch
+#services:
+#  - elasticsearch
 
 before_script:
   - sleep 20
