@@ -3,6 +3,12 @@
 History
 -------
 
+1.2.0 (2016-08-23)
+++++++++++++++++++
+
+* Added command to initialize index
+* Change return value for ``gum.tasks.handle_save`` task
+
 1.1.1 (2016-04-12)
 ++++++++++++++++++
 

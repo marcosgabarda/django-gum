@@ -11,7 +11,7 @@ import subprocess
 
 
 default_app_config = 'gum.apps.GumConfig'
-VERSION = (1, 1, 1, 'final', 0)
+VERSION = (1, 2, 0, 'final', 0)
 
 
 def get_version(version=None):
