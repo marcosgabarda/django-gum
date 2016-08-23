@@ -19,6 +19,10 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         actions = parser.add_mutually_exclusive_group()
         actions.add_argument(
+            "--init", action="store_const", dest="action", const="init",
+            help="creates indexes and updates the settings",
+        )
+        actions.add_argument(
             "--update-index", nargs="*", action="store", dest='update-index', help="updates indices for given models"
         )
         actions.add_argument(
@@ -27,6 +31,14 @@ class Command(BaseCommand):
         actions.add_argument(
             "--remove", action="store_const", dest="action", const="remove", help="remove all indices"
         )
+
+    def _init_index(self):
+        """Order to update index."""
+        self.stdout.write('Initializing index...', ending='')
+        indexer.initialize_index()
+        indexer.update_settings()
+        self.stdout.write(' OK')
+        indexer.update_index(stdout=self.stdout, only_mapping=True)
 
     def _update_index(self, models):
         """Order to update index."""
@@ -61,6 +73,7 @@ class Command(BaseCommand):
         actions = {
             "update-settings": self._update_settings,
             "remove": self._remove_index,
+            "init": self._init_index,
         }
         action = options.get("action")
         if action in actions:
