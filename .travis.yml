@@ -14,7 +14,6 @@ before_script:
 before_install:
   - pip install --quiet coveralls
   - pip install codecov
-  - curl -O https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.7.3.deb && sudo dpkg -i --force-confnew elasticsearch-1.7.3.deb && sudo service elasticsearch restart
 
 
 install:
