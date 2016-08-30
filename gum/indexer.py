@@ -77,13 +77,17 @@ class MappingType(object):
         """
         raise NotImplementedError()
 
-    def create_mapping_type(self):
-        """Creates the Elasticsearch type."""
+    def create_mapping_type(self, update_all_types=False):
+        """Creates the Elasticsearch type.
+
+        :param update_all_types:
+        """
         es = self.get_elasticsearch_connection()
         es.indices.put_mapping(
             index=self.index,
             doc_type=self.get_type(),
             body=self.mapping(),
+            update_all_types=update_all_types,
             ignore=409
         )
 
@@ -215,8 +219,9 @@ class Indexer(object):
             if mapping_type.index != ELASTICSEARCH_INDICES or mapping_type.urls is not None:
                 mapping_type_es.indices.delete(index=mapping_type.index, ignore=400)
 
-    def update_index(self, stdout=None, only_mapping=False, restrict_to=None):
+    def update_index(self, stdout=None, only_mapping=False, restrict_to=None, update_all_types=False):
         """Update index for all registered models.
+        :param update_all_types:
         :param restrict_to:
         :param only_mapping:
         :param stdout:
@@ -238,7 +243,7 @@ class Indexer(object):
                 total_instances = 0
             if stdout:
                 stdout.write("Indexing %s instances from %s " % (total_instances, str(model)))
-            mapping_type.create_mapping_type()
+            mapping_type.create_mapping_type(update_all_types=update_all_types)
             if not only_mapping:
                 for step, instance in enumerate(instances):
                     mapping_type.index_document(instance)

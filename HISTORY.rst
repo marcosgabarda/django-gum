@@ -3,6 +3,11 @@
 History
 -------
 
+2.0.1 (2016-08-30)
+++++++++++++++++++
+
+* Added ``update_all_types`` parameter to ``update_index`` method.
+
 2.0.0 (2016-08-29)
 ++++++++++++++++++
 
