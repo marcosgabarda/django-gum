@@ -12,3 +12,11 @@ class Post(models.Model):
     content = models.TextField()
     tags = models.ManyToManyField(Tag)
 
+
+class CommentThread(models.Model):
+    post = models.ForeignKey(Post)
+
+
+class Comment(models.Model):
+    thread = models.ForeignKey(CommentThread, related_name="comments")
+    content = models.TextField()
