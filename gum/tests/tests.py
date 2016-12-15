@@ -13,7 +13,7 @@ from gum import get_version, get_git_changeset
 from gum.indexer import indexer
 from gum.managers import GenericElasticsearchManager
 from gum.tasks import handle_save, handle_delete
-from gum.tests.test_app.models import Post, Tag
+from gum.tests.test_app.models import Post, Tag, Comment, CommentThread
 from gum.tests.test_settings import TEST_SETTINGS, TASKS_TEST_SETTINGS
 from gum.utils import elasticsearch_connection
 
@@ -53,7 +53,7 @@ class GumTest(GumTestBase):
         mommy.make("test_app.Post", _quantity=number_of_posts)
         self.assertEquals(Post.objects.count(), number_of_posts)
         # Index isn't available at this moment, we have to wait
-        time.sleep(2)
+        time.sleep(5)
         # Gets all indexed documents
         response = Post.elasticsearch.search(body={
             "query": {
@@ -62,16 +62,41 @@ class GumTest(GumTestBase):
         })
         self.assertEquals(response["hits"]["total"], number_of_posts)
 
+    def test_update_bulk_index(self):
+        post = mommy.make("test_app.Post")
+        thread = mommy.make("test_app.CommentThread", post=post)
+        number_of_comments = 5
+        mommy.make("test_app.Comment", thread=thread, _quantity=number_of_comments)
+        thread.save()
+        self.assertEquals(Comment.objects.count(), number_of_comments)
+        self.assertEquals(thread.comments.count(), number_of_comments)
+        # Index isn't available at this moment, we have to wait
+        time.sleep(5)
+        # Gets all indexed documents
+        response = CommentThread.elasticsearch.search(body={
+            "query": {
+                "filtered": {
+                    "filter": {
+                        "term": {"thread_id": thread.pk}
+                    },
+                    "query": {
+                        "match_all": {}
+                    }
+                }
+            }
+        })
+        self.assertEquals(response["hits"]["total"], number_of_comments)
+
     def test_delete_model(self):
         number_of_posts = 5
         mommy.make("test_app.Post", _quantity=number_of_posts)
         self.assertEquals(Post.objects.count(), number_of_posts)
         # Index isn't available at this moment, we have to wait
-        time.sleep(2)
+        time.sleep(5)
         # Delete a post
         post = Post.objects.all()[0]
         post.delete()
-        time.sleep(2)
+        time.sleep(5)
         # Gets all indexed documents
         response = Post.elasticsearch.search(body={
             "query": {
@@ -118,7 +143,7 @@ class GumTasksTest(GumTestBase):
         content_type = ContentType.objects.get_for_model(Post.objects.first())
         for post in Post.objects.all():
             handle_save(sender_content_type_pk=content_type.pk, instance_pk=post.pk)
-        time.sleep(2)
+        time.sleep(5)
         # Gets all indexed documents
         response = Post.elasticsearch.search(body={
             "query": {
@@ -133,7 +158,7 @@ class GumTasksTest(GumTestBase):
         content_type = ContentType.objects.get_for_model(Post.objects.first())
         for post in Post.objects.all():
             handle_delete(sender_content_type_pk=content_type.pk, instance_pk=post.pk)
-        time.sleep(2)
+        time.sleep(5)
         # Gets all indexed documents
         response = Post.elasticsearch.search(body={
             "query": {

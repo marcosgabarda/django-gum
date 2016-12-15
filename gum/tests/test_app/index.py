@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from gum.indexer import MappingType, indexer
-from gum.tests.test_app.models import Post
+from gum.tests.test_app.models import Post, CommentThread, Comment
 
 
 class PostMappingType(MappingType):
@@ -35,3 +35,33 @@ class PostMappingType(MappingType):
         }
 
 indexer.register(Post, PostMappingType)
+
+
+class CommentThreadMappingType(MappingType):
+
+    def document(self, instance):
+        return [
+            {
+                "_id": comment.pk,
+                "thread_id": instance.pk,
+                "content": comment.content,
+            } for comment in instance.comments.all()
+        ]
+
+    def mapping(self):
+        return {
+            self.get_type(): {
+                "properties": {
+                    "thread_id": {
+                        "type": "long",
+                        "store": True,
+                    },
+                    "content": {
+                        "type": "string",
+                        "store": True,
+                    }
+                }
+            }
+        }
+
+indexer.register(CommentThread, CommentThreadMappingType)

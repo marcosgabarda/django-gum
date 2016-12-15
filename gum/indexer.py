@@ -6,6 +6,7 @@ import six
 from django.db import models
 from django.db.models.base import ModelBase
 from django.db.models.signals import post_save, pre_delete
+from elasticsearch.helpers import bulk
 
 from gum.managers import ElasticsearchManager
 from gum.settings import ELASTICSEARCH_INDICES, DEFAULT_ELASTICSEARCH_SETTINGS
@@ -47,7 +48,10 @@ class MappingType(object):
         """Gets the internal Elasticsearch id for instance.
         :param instance:
         """
-        return instance.pk
+        try:
+            return instance.pk
+        except AttributeError:
+            return None
 
     def get_type(self):
         """Gets a strings that represents the type for the model."""
@@ -58,6 +62,16 @@ class MappingType(object):
     def get_elasticsearch_connection(self):
         """Gets the Elasticsearch connection with the urls attribute"""
         return elasticsearch_connection(urls=self.urls)
+
+    def get_actions(self, documents):
+        """Gets a generator for obtaining the bulk action for each document
+        in documents. We assume documents is iterable, and each document is
+        a dictionary.
+        """
+        for document in documents:
+            document["_index"] = self.index
+            document["_type"] = self.get_type()
+            yield document
 
     def mapping(self):
         """Gets the mapping of a given model. Only uses the model class, not
@@ -91,6 +105,26 @@ class MappingType(object):
             ignore=409
         )
 
+    def index_single_document(self, es, document_id, document):
+        """Creates a single new document in the index."""
+        if not document_id:
+            es.index(
+                index=self.index,
+                doc_type=self.get_type(),
+                body=document
+            )
+        es.index(
+            index=self.index,
+            doc_type=self.get_type(),
+            id=document_id,
+            body=document
+        )
+
+    def index_bulk_documents(self, es, documents):
+        """Creates a bulk of new documents in  the index."""
+        actions = self.get_actions(documents)
+        bulk(es, actions=actions)
+
     def index_document(self, instance):
         """Indexes an instance of the model.
 
@@ -98,19 +132,19 @@ class MappingType(object):
         :return:
         """
         es = self.get_elasticsearch_connection()
-        try:
-            es.index(
-                index=self.index,
-                doc_type=self.get_type(),
-                id=self.get_id(instance),
-                body=self.document(instance)
-            )
-        except AttributeError:
-            es.index(
-                index=self.index,
-                doc_type=self.get_type(),
-                body=self.document(instance)
-            )
+        document = self.document(instance)
+        document_id = self.get_id(instance)
+        if isinstance(document, dict):
+            # If is a dict, single create
+            self.index_single_document(es, document_id=document_id, document=document)
+        else:
+            try:
+                # If iterable, then bulk create...
+                _ = iter(document)
+                self.index_bulk_documents(es, documents=document)
+            except TypeError:
+                # Not iterable, we don't index
+                pass
 
     def delete_document(self, instance):
         """Deletes an instance of the model.

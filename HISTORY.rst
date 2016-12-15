@@ -3,6 +3,11 @@
 History
 -------
 
+2.0.2 (2016-12-15)
+++++++++++++++++++
+
+* Support for indexing several documents from a single instance.
+
 2.0.1 (2016-08-30)
 ++++++++++++++++++
 

@@ -1,0 +1,11 @@
+version: '2'
+
+services:
+
+  index:
+    image: elasticsearch:2.3
+    container_name: gum-index
+    command: elasticsearch -Des.cluster.name="gum"
+    ports:
+      - "9200:9200"
+      - "9300:9300"
